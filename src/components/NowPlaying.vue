@@ -1,36 +1,20 @@
 <template>
   <div class="media">
-    <div
-      class="media-left"
-      v-show="showAlbumArt"
-    >
-      <figure
-        class="image"
-        :class="{ 'is-64x64': showArtist, 'is-48x48': !showArtist }"
-      >
-        <PreloadedImage
-          v-if="albumArt"
-          :src="albumArt"
-          alt="Album Art"
-        />
+    <div class="media-left" v-show="showAlbumArt">
+      <figure class="image" :class="{ 'is-64x64': showArtist, 'is-48x48': !showArtist }">
+        <PreloadedImage v-if="albumArt" :src="albumArt" alt="Album Art" />
       </figure>
     </div>
 
     <div class="media-content">
       <p class="is-size-4 has-text-white">{{ trackName }}</p>
 
-      <p
-        class="is-size-6 has-text-white"
-        v-show="showArtist"
-      >
+      <p class="is-size-6 has-text-white" v-show="showArtist">
         {{ artistName }}
       </p>
     </div>
 
-    <div
-      class="media-right"
-      v-show="showSpotifyLogo"
-    >
+    <div class="media-right" v-show="showSpotifyLogo">
       <figure class="image is-32x32">
         <img src="@/assets/svg/spotify-logo-without-text.svg" alt="Spotify">
       </figure>
@@ -39,8 +23,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import PreloadedImage from '@/components/PreloadedImage'
 
 const endpointUri = 'https://api.spotify.com/v1/me/player/currently-playing'
@@ -75,11 +57,11 @@ export default {
   }),
 
   computed: {
-    trackName () {
+    trackName() {
       return this.userPlayer ? this.userPlayer.item.name : null
     },
 
-    artistName () {
+    artistName() {
       if (!this.userPlayer || this.userPlayer.item.artists.length == 0) {
         return null
       }
@@ -87,7 +69,7 @@ export default {
       return this.userPlayer.item.artists[0].name
     },
 
-    albumArt () {
+    albumArt() {
       if (!this.userPlayer || this.userPlayer.item.album.images.length == 0) {
         return null
       }
@@ -96,12 +78,12 @@ export default {
     }
   },
 
-  mounted () {
+  mounted() {
     this.loadUserPlayer()
   },
 
   methods: {
-    loadUserPlayer () {
+    loadUserPlayer() {
       const headers = {
         'Authorization': `Bearer ${this.accessToken}`
       }

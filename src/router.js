@@ -10,13 +10,13 @@ export default new Router({
     {
       name: 'index',
       path: '/',
-      component: () => import('@/pages/Index.vue')
+      component: () => import('@/pages/LandingPage.vue')
     },
 
     {
       name: 'code',
       path: '/code',
-      component: () => import('@/pages/Code.vue')
+      component: () => import('@/pages/GenerateCode.vue')
     },
 
     {
@@ -32,18 +32,18 @@ export default new Router({
     }
   ],
 
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let scrollDuration = 500,
-          cosParameter = window.scrollY / 2,
-          oldTimestamp = performance.now(),
-          scrollCount = 0
+        cosParameter = window.scrollY / 2,
+        oldTimestamp = performance.now(),
+        scrollCount = 0
 
-      function step (newTimestamp) {
+      function step(newTimestamp) {
         scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp))
 
         if (scrollCount >= Math.PI) {

@@ -1,9 +1,6 @@
 <template>
   <div>
-    <LandingHead
-      class="is-light"
-      :showLoginButton="false"
-    />
+    <LandingHead class="is-light" :showLoginButton="false" />
 
     <section class="section">
       <div class="container">
@@ -21,9 +18,7 @@
               </div>
 
               <div class="level-right">
-                <b-switch
-                  v-model="settings.showSpotifyLogo"
-                />
+                <b-switch v-model="settings.showSpotifyLogo" />
               </div>
             </div>
 
@@ -35,9 +30,7 @@
               </div>
 
               <div class="level-right">
-                <b-switch
-                  v-model="settings.showAlbumArt"
-                />
+                <b-switch v-model="settings.showAlbumArt" />
               </div>
             </div>
 
@@ -49,9 +42,7 @@
               </div>
 
               <div class="level-right">
-                <b-switch
-                  v-model="settings.showArtist"
-                />
+                <b-switch v-model="settings.showArtist" />
               </div>
             </div>
           </div>
@@ -66,18 +57,13 @@
                 <img src="@/assets/img/sample-game-screen.jpg" alt="Game Screen">
               </figure>
 
-              <NowPlaying
-                class="widget"
-                :showAlbumArt="settings.showAlbumArt"
-                :showArtist="settings.showArtist"
-                :showSpotifyLogo="settings.showSpotifyLogo"
-                :accessToken="accessToken"
-              />
+              <NowPlaying class="widget" :showAlbumArt="settings.showAlbumArt" :showArtist="settings.showArtist"
+                :showSpotifyLogo="settings.showSpotifyLogo" :accessToken="accessToken" />
             </div>
 
             <p class="has-text-weight-semibold">Paste the following URL to a browser source:</p>
 
-            <textarea class="textarea" readonly>{{ browserSourceUrl }}</textarea>
+            <textarea class="textarea" readonly v-text="browserSourceUrl"></textarea>
           </div>
         </div>
       </div>
@@ -95,15 +81,15 @@ export default {
   components: { LandingHead, NowPlaying },
 
   computed: {
-    accessToken () {
+    accessToken() {
       const parsed = queryString.parse(this.$route.hash)
 
       return parsed['access_token']
     },
 
-    browserSourceUrl () {
+    browserSourceUrl() {
       const nowPlayingPage = this.$router.resolve({ name: 'nowPlaying' }),
-            base = `${location.origin}${nowPlayingPage.href}`
+        base = `${location.origin}${nowPlayingPage.href}`
 
       const query = queryString.stringify({
         accessToken: this.accessToken,
