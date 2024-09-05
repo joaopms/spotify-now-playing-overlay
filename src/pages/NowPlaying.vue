@@ -1,12 +1,6 @@
 <template>
-  <Widget
-    v-if="accessToken"
-
-    :showArtist="showArtist"
-    :showAlbumArt="showAlbumArt"
-    :showSpotifyLogo="showSpotifyLogo"
-    :accessToken="accessToken"
-  />
+  <Widget v-if="accessToken" :showArtist="showArtist" :showAlbumArt="showAlbumArt" :showSpotifyLogo="showSpotifyLogo"
+    :accessToken="accessToken" :refreshToken="refreshToken" />
 </template>
 
 <script>
@@ -19,16 +13,18 @@ export default {
     showArtist: true,
     showAlbumArt: true,
     showSpotifyLogo: true,
-    accessToken: null
+    accessToken: null,
+    refreshToken: null
   }),
 
-  mounted () {
-    const { showArtist, showAlbumArt, showSpotifyLogo, accessToken } = this.$route.query
+  mounted() {
+    const { showArtist, showAlbumArt, showSpotifyLogo, accessToken, refreshToken } = this.$route.query
 
     this.showArtist = Boolean(showArtist)
     this.showAlbumArt = Boolean(showAlbumArt)
     this.showSpotifyLogo = Boolean(showSpotifyLogo)
     this.accessToken = accessToken
+    this.refreshToken = refreshToken
   }
 }
 </script>

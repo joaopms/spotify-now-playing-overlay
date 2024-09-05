@@ -25,7 +25,8 @@
 <script>
 import PreloadedImage from '@/components/PreloadedImage'
 
-const endpointUri = 'https://api.spotify.com/v1/me/player/currently-playing'
+const playingEndpointUri = 'https://api.spotify.com/v1/me/player/currently-playing'
+const refreshEndpointUri = 'https://accounts.spotify.com/api/token'
 
 export default {
   components: { PreloadedImage },
@@ -49,11 +50,18 @@ export default {
     accessToken: {
       type: String,
       default: null
+    },
+    refreshToken: {
+      type: String,
+      default: null
     }
   },
 
   data: () => ({
-    userPlayer: null
+    userPlayer: null,
+    newAccessToken: null,
+    newRefreshToken: null,
+    refreshTimer: null,
   }),
 
   computed: {
@@ -78,6 +86,11 @@ export default {
     }
   },
 
+  created() {
+    this.newAccessToken = this.accessToken;
+    this.newRefreshToken = this.refreshToken;
+  },
+
   mounted() {
     this.loadUserPlayer()
   },
@@ -85,15 +98,51 @@ export default {
   methods: {
     loadUserPlayer() {
       const headers = {
-        'Authorization': `Bearer ${this.accessToken}`
+        'Authorization': `Bearer ${this.newAccessToken}`
       }
 
-      this.$http.get(endpointUri, { headers })
+      this.$http.get(playingEndpointUri, { headers })
         .then(response => {
           this.userPlayer = response.data
 
-          setTimeout(this.loadUserPlayer, 5000)
+          if (!this.refreshTimer) {
+            setTimeout(this.loadUserPlayer, 5000)
+          }
         })
+        .catch((err) => {
+          if (err.status === 401) {
+            this.refreshAccessToken();
+          }
+        });
+    },
+    refreshAccessToken() {
+      if (!this.newRefreshToken) {
+        return;
+      }
+
+      const data = {
+        grant_type: "refresh_token",
+        refresh_token: this.refreshToken,
+        client_id: process.env.VUE_APP_SPOTIFY_CLIENT_ID
+      }
+      const headers = {
+        'Content-Type': `application/x-www-form-urlencoded`
+      }
+
+      this.$http.post(refreshEndpointUri, data, { headers })
+        .then(response => {
+          this.newAccessToken = response.data.access_token;
+          this.newRefreshToken = response.data.refresh_token;
+
+          if (!this.refreshTimer) {
+            setTimeout(this.loadUserPlayer, 5000)
+          }
+
+          const url = new URL(window.location)
+          url.searchParams.set("accessToken", this.newAccessToken)
+          url.searchParams.set("refreshToken", this.newRefreshToken)
+          window.location = url
+        });
     }
   }
 }

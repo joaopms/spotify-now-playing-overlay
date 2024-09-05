@@ -52,13 +52,14 @@
 
             <hr />
 
-            <div class="preview">
+            <div class="preview" v-if="tokens">
               <figure class="screen image is-16by9">
                 <img src="@/assets/img/sample-game-screen.jpg" alt="Game Screen">
               </figure>
 
               <NowPlaying class="widget" :showAlbumArt="settings.showAlbumArt" :showArtist="settings.showArtist"
-                :showSpotifyLogo="settings.showSpotifyLogo" :accessToken="accessToken" />
+                :showSpotifyLogo="settings.showSpotifyLogo" :accessToken="tokens.accessToken"
+                :refreshToken="tokens.refreshToken" />
             </div>
 
             <p class="has-text-weight-semibold">Paste the following URL to a browser source:</p>
@@ -77,22 +78,30 @@ import queryString from 'query-string'
 import LandingHead from '@/components/LandingHead'
 import NowPlaying from '@/components/NowPlaying'
 
+const endpointUri = 'https://accounts.spotify.com/api/token'
+
 export default {
   components: { LandingHead, NowPlaying },
 
   computed: {
-    accessToken() {
-      const parsed = queryString.parse(this.$route.hash)
-
-      return parsed['access_token']
+    spotifyCode() {
+      return this.$route.query.code;
+    },
+    spotifyVerifier() {
+      return this.$route.query.state;
     },
 
+
     browserSourceUrl() {
+      if (!this.tokens) {
+        return null;
+      }
+
       const nowPlayingPage = this.$router.resolve({ name: 'nowPlaying' }),
         base = `${location.origin}${nowPlayingPage.href}`
 
       const query = queryString.stringify({
-        accessToken: this.accessToken,
+        ...this.tokens,
         ...this.settings
       })
 
@@ -101,12 +110,43 @@ export default {
   },
 
   data: () => ({
+    tokens: null,
     settings: {
       showSpotifyLogo: true,
       showAlbumArt: true,
       showArtist: true
     }
-  })
+  }),
+
+  mounted() {
+    this.getSpotifyAccessToken();
+  },
+
+  methods: {
+    getSpotifyAccessToken() {
+      const codePage = this.$router.resolve({ name: 'code' })
+      const redirectUri = `${location.origin}${codePage.href}`
+
+      const data = {
+        grant_type: "authorization_code",
+        code: this.spotifyCode,
+        redirect_uri: redirectUri,
+        client_id: process.env.VUE_APP_SPOTIFY_CLIENT_ID,
+        code_verifier: this.spotifyVerifier,
+      }
+      const headers = {
+        'Content-Type': "application/x-www-form-urlencoded"
+      }
+
+      this.$http.post(endpointUri, data, { headers })
+        .then(response => {
+          this.tokens = {
+            accessToken: response.data.access_token,
+            refreshToken: response.data.refresh_token,
+          }
+        })
+    }
+  }
 }
 </script>
 

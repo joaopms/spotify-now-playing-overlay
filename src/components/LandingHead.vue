@@ -9,12 +9,8 @@
 
           <p class="is-size-3">Overlay for OBS &amp; XSplit</p>
 
-          <p
-            v-show="showLoginButton"
-          >
-            <a class="button is-success is-large is-rounded is-outlined"
-              :href="loginUri"
-            >
+          <p v-show="showLoginButton">
+            <a class="button is-success is-large is-rounded is-outlined" :href="loginUri" :disable="!loginUri">
               Login with Spotify
             </a>
           </p>
