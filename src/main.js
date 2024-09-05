@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Switch from 'buefy/dist/components/switch'
+import Switch from 'buefy'
 
 import axios from 'axios'
 
