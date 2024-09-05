@@ -7,6 +7,9 @@ $speed-slower: 250ms !default;
 
 $primary: #1ed760;
 
+@import "~bulma";
+@import "~buefy/src/scss/components/switch";
+
 html,
 body {
   background: transparent;
@@ -43,6 +46,3 @@ body {
   transform: translate3d(0, 10px, 0);
   opacity: 0;
 }
-
-@import "~bulma";
-@import "~buefy/src/scss/components/switch";

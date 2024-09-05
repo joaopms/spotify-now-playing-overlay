@@ -1,23 +1,37 @@
 <template>
-  <div class="media">
-    <div class="media-left" v-show="showAlbumArt">
-      <figure class="image" :class="{ 'is-64x64': showArtist, 'is-48x48': !showArtist }">
-        <PreloadedImage v-if="albumArt" :src="albumArt" alt="Album Art" />
-      </figure>
+  <div>
+    <div class="media" v-if="!canRefresh">
+      <div class="media-content">
+        <p class="is-size-4 has-text-white">
+          Please generate a new link
+        </p>
+
+        <p class="is-size-6">
+          <a class="has-text-white" :href="siteUrl">{{ siteUrl }}</a>
+        </p>
+      </div>
     </div>
 
-    <div class="media-content">
-      <p class="is-size-4 has-text-white">{{ trackName }}</p>
+    <div class="media" v-else>
+      <div class="media-left" v-show="showAlbumArt">
+        <figure class="image" :class="{ 'is-64x64': showArtist, 'is-48x48': !showArtist }">
+          <PreloadedImage v-if="albumArt" :src="albumArt" alt="Album Art" />
+        </figure>
+      </div>
 
-      <p class="is-size-6 has-text-white" v-show="showArtist">
-        {{ artistName }}
-      </p>
-    </div>
+      <div class="media-content">
+        <p class="is-size-4 has-text-white">{{ trackName }}</p>
 
-    <div class="media-right" v-show="showSpotifyLogo">
-      <figure class="image is-32x32">
-        <img src="@/assets/svg/spotify-logo-without-text.svg" alt="Spotify">
-      </figure>
+        <p class="is-size-6 has-text-white" v-show="showArtist">
+          {{ artistName }}
+        </p>
+      </div>
+
+      <div class="media-right" v-show="showSpotifyLogo">
+        <figure class="image is-32x32">
+          <img src="@/assets/svg/spotify-logo-without-text.svg" alt="Spotify">
+        </figure>
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +76,7 @@ export default {
     newAccessToken: null,
     newRefreshToken: null,
     refreshTimer: null,
+    canRefresh: true,
   }),
 
   computed: {
@@ -83,6 +98,10 @@ export default {
       }
 
       return this.userPlayer.item.album.images[0].url
+    },
+
+    siteUrl() {
+      return window.location.origin;
     }
   },
 
@@ -142,6 +161,10 @@ export default {
           url.searchParams.set("accessToken", this.newAccessToken)
           url.searchParams.set("refreshToken", this.newRefreshToken)
           window.location = url
+        }).catch((err) => {
+          if (err.status === 400) {
+            this.canRefresh = false;
+          }
         });
     }
   }
