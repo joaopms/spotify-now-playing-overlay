@@ -40,6 +40,8 @@ jobs:
         run: npm run build
         env:
           VUE_APP_SPOTIFY_CLIENT_ID: ${{ secrets.SpotifyClientId }}
+      - name: Serve index.html on 404.html
+        run: ln -s dist/index.html 404.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
