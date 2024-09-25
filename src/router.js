@@ -6,6 +6,10 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
 
+  base: process.env.GITHUB_ACTIONS == "true"
+    ? "/spotify-now-playing-overlay/"
+    : "/",
+
   routes: [
     {
       name: 'index',
