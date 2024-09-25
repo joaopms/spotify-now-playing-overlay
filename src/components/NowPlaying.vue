@@ -101,7 +101,8 @@ export default {
     },
 
     siteUrl() {
-      return window.location.origin;
+      const indexPage = this.$router.resolve({ name: 'index' })
+      return `${location.origin}${indexPage.href}`
     }
   },
 
