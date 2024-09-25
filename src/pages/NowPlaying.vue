@@ -20,9 +20,9 @@ export default {
   mounted() {
     const { showArtist, showAlbumArt, showSpotifyLogo, accessToken, refreshToken } = this.$route.query
 
-    this.showArtist = Boolean(showArtist)
-    this.showAlbumArt = Boolean(showAlbumArt)
-    this.showSpotifyLogo = Boolean(showSpotifyLogo)
+    this.showArtist = showArtist === "true"
+    this.showAlbumArt = showAlbumArt === "true"
+    this.showSpotifyLogo = showSpotifyLogo === "true"
     this.accessToken = accessToken
     this.refreshToken = refreshToken
   }
